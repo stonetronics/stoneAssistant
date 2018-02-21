@@ -10,13 +10,13 @@ Planned features:
  - 12V Supply
  - 3 USB Ports
  - Speech Commands
-   o microphone preamp
+   - microphone preamp
  - Pushbuttons for optional control (Home button, Play/Pause, etc)
  - ATtiny
-   o RGB LED for nice appearance
-   o Shutdown and Power Control
-   o Controlable Fan
-   o Serial Commands
+   - RGB LED for nice appearance
+   - Shutdown and Power Control
+   - Controlable Fan
+   - Serial Commands
  - 3D-printed enclosure
  
 The device will be powered by a 230VAC/12VDC switching supply and another 12VDC/5VDC DC/DC converter that powers the Raspberry Pi, ATtiny and USB Ports.
