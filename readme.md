@@ -27,4 +27,4 @@ PCB files (Eagle 8)
  coming soon!
  
 Mechanical files (FreeCAD 0.16)
- coming soon!
+ /Mechanical/buttonPrototype    Prototype for Button with stopper
