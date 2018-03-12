@@ -24,7 +24,10 @@ For power control (5V on Raspberry Pi, Software controlable mains switch), fan c
 The Software (RingoWare) for touch screen control, Media, etc will be done by https://github.com/Ringo96
 
 PCB files (Eagle 8)
- coming soon!
+- /PCBs/stoneAssistant_pwrMgmt.sch Power management and pwm schematic
+- /PCBs/stoneAssistant_pwrMgmt.brd Power management and pwm board
  
 Mechanical files (FreeCAD 0.16)
- /Mechanical/buttonPrototype    Prototype for Button with stopper
+- /Mechanical/buttonPrototype    Prototype for Button with stopper
+- /Mechanical/Frontplate         Frontplate that holds the raspberry pi display, buttons and speakers
+- /Mechanical/Button             Model of the developed button
