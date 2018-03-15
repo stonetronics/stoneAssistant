@@ -4,7 +4,7 @@
 
 main.c
 
-rgbPwm.c
+rgbPwmTimerFan.c
 
 stoneProtocol.c
 

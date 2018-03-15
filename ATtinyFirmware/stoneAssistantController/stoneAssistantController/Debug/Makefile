@@ -38,7 +38,7 @@ SUBDIRS :=
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../main.c \
-../rgbPwm.c \
+../rgbPwmTimerFan.c \
 ../stoneProtocol.c \
 ../uart.c
 
@@ -51,25 +51,25 @@ ASM_SRCS +=
 
 OBJS +=  \
 main.o \
-rgbPwm.o \
+rgbPwmTimerFan.o \
 stoneProtocol.o \
 uart.o
 
 OBJS_AS_ARGS +=  \
 main.o \
-rgbPwm.o \
+rgbPwmTimerFan.o \
 stoneProtocol.o \
 uart.o
 
 C_DEPS +=  \
 main.d \
-rgbPwm.d \
+rgbPwmTimerFan.d \
 stoneProtocol.d \
 uart.d
 
 C_DEPS_AS_ARGS +=  \
 main.d \
-rgbPwm.d \
+rgbPwmTimerFan.d \
 stoneProtocol.d \
 uart.d
 

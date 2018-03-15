@@ -12,7 +12,7 @@
 
  #define PORT_LED	PORTD
  #define LED_SHDWN   PD4
- #define LED_RUN		PD3
+ #define LED_RUN	 PD3
  #define LED_UART    PD2
 
  typedef enum {IDLE, WAIT_LEN, DATA, WAIT_STOP} stoneProtocolState;

@@ -8,13 +8,24 @@
 #define F_CPU  8000000UL
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdlib.h>
 
 
-#include "rgbPwm.h"
+#include "rgbPwmTimerFan.h"
 #include "uart.h"
 #include "stoneProtocol.h"
+
+//time in seconds to give the rpi to shutdown
+#define RPI_SHUTDOWN_SECONDS	15
+
+//time in seconds for button press to send soft shutdown request
+#define RPI_SHUTDOWN_REQ_TIME	2
+
+//time in seconds for button press to trigger hard shutdown
+#define RPI_SHUTDOWN_HARD_TIME	10
+
 
 #define DDR_LED		DDRD
 #define PORT_LED	PORTD
@@ -26,8 +37,6 @@
 #define PORT_HOLD	PORTB
 #define PIN_HOLD	PB0
 
-
-
 #define DDR_BUTTON	DDRB
 #define PORT_BUTTON PORTB
 #define PIN_BUTTON	PINB
@@ -36,12 +45,6 @@
 #define DDR_RPISUP	DDRD
 #define PORT_RPISUP	PORTD
 #define RPISUP		PD6
-
-#define DDR_FAN		DDRA
-#define PORT_FAN	PORTA
-#define PIN_FAN		PINA
-#define FAN_PWM		PA1
-#define FAN_SIGNAL	PA0
 
 void shutdown(uint8_t shutdownSeconds)
 {
@@ -57,11 +60,40 @@ void shutdown(uint8_t shutdownSeconds)
 	PORT_HOLD |= 1<<PIN_HOLD; //release mains power supply (turn off)
 }
 
+void rpiHardReset(uint8_t shutdownSeconds)
+{
+	uint8_t i = 0; //iteration variable
+
+	rgbPwm_setHexColor(0x00fffb26); //yellow light to indicate hard reset sequence has started
+
+	for (i = 0; i < shutdownSeconds; i++)	//shutdown delay
+		_delay_ms(1000);
+
+	PORT_RPISUP |= 1<<RPISUP; //release raspberry pi power supply
+	_delay_ms(500); //wait half a second to let the pi "cool down"
+	PORT_RPISUP &= ~(1<<RPISUP); //turn on rpi power supply
+
+	rgbPwm_setHexColor(0x00fffb26); //green light to indicate hard reset sequence has completed, rpi is on power again
+}
+
+void shutdownRequest()
+{
+	uint8_t requestMessage[2];
+
+	requestMessage[0] = 'C';	//control message
+	requestMessage[1] = 1;		//shutdown request
+
+	stoneProtocol_transmit(requestMessage, 2);
+}
+
 int main(void)
 {
 	uint8_t inputChar = 0;
 	uint8_t* payload = NULL;
 	uint8_t protocolRet = 0;
+
+	uint8_t button = 0;
+	uint8_t buttonOld = 0;
 
 	//init supply holding circuit (turned on)
 	DDR_HOLD |= 1<<PIN_HOLD;
@@ -74,16 +106,13 @@ int main(void)
 	//init button input with internal pull up enabled
 	DDR_BUTTON &= ~(1<<BUTTON);
 	PORT_BUTTON |= 1<<BUTTON;
+	button = PIN_BUTTON & (1<<BUTTON);
+	buttonOld = button;
 
-	//init rgb pwm timers (color: blue/red 220/255)
-	rgbPwm_init();
-	rgbPwm_setHexColor(0x00FF00DC);
-
-	//init fan control pins (fan turned off)
-	DDR_FAN |= 1<<FAN_PWM;
-	PORT_FAN &= ~(1<<FAN_PWM);
-	DDR_FAN &= ~(1<<FAN_SIGNAL);
-	//PORT_FAN |= (1<<FAN_SIGNAL);
+	//init rgb and fan pwm timers (color: indigo, fan: 50%)
+	rgbPwmTimerFan_init();
+	rgbPwm_setHexColor(0);//x00b522f9);
+	fan_setSpeed(127);
 
 	//init leds
 	DDR_LED  |= (1<<LED_SHDWN) | (1<<LED_RUN) | (1<<LED_UART);
@@ -94,10 +123,38 @@ int main(void)
 	//init serial protocol
 	stoneProtocol_init();
 
+	//enable interrupts (needed for timer stuff)
+	sei();
+
     while (1) 
     {
 		//alive indication
 		PORT_LED ^= (1<<LED_RUN);
+
+		//button press handling
+		button = PIN_BUTTON & (1<<BUTTON);
+		if (buttonOld != button)
+		{
+			buttonOld = button;
+			if (!button) //falling edge
+			{
+				timer_start();
+			}
+			else //rising edge
+			{
+				timer_stop();
+			}
+		}
+
+		//button timer handling for shutdown
+		if (timer_getTime() >= RPI_SHUTDOWN_REQ_TIME)
+		{
+			shutdownRequest();
+		}
+		if (timer_getTime() >= RPI_SHUTDOWN_HARD_TIME)
+		{
+			shutdown(1);
+		}
 
 		//usart protocol handling, command execution
 		if (uart_testAndGetC(&inputChar))
@@ -136,28 +193,33 @@ int main(void)
 								rgbPwm_setHexColor(((uint32_t)payload[1]<<16) | ((uint32_t)payload[2]<<8) | ((uint32_t)payload[3])); //0x00RRGGBB
 							break;
 
-							case 'f': //fan pwm
+							case 'f': //fan pwm - tested
 							case 'F':
-								//todo
+								fan_setSpeed(payload[1]);
 							break;
 
 							case 'c': //command
 							case 'C':
 
-								//todo: shutdown-handshake
 								switch (payload[1])
 								{
-									case 's': //shutdown
-									case 'S':
-										shutdown(10);
+									case 0: //shutdown
+										shutdown(RPI_SHUTDOWN_SECONDS);
 									break;
 
-									case 'a': //acknowledge
-									case 'A':
+									//case 1: //shutdown request - nothing to do on attiny, just here for protocol doc
+									//break;
+
+									case 6: //reboot
+										rpiHardReset(RPI_SHUTDOWN_SECONDS);
 									break;
 
-									case 'h': //heartbeat
-									case 'H':
+									case 9: //hard reset
+										rpiHardReset(0);
+									break;
+
+									case 10: //hard shutdown
+										shutdown(0);
 									break;
 
 									default:
