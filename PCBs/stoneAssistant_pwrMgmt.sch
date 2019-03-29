@@ -16086,7 +16086,7 @@ RS Best.-Nr.: 790-1098</description>
 <sheets>
 <sheet>
 <plain>
-<text x="322.58" y="50.8" size="5.08" layer="97">FREE TO USE
+<text x="322.58" y="50.8" size="5.08" layer="97">FOR FREE USE
 BY EVERYONE</text>
 </plain>
 <instances>

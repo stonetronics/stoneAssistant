@@ -499,7 +499,7 @@
 <text x="27.432" y="48.641" size="1.016" layer="255" font="vector" ratio="15">T2</text>
 <text x="35.433" y="48.514" size="1.016" layer="255" font="vector" ratio="15">R5</text>
 <text x="12.065" y="33.655" size="1.27" layer="255" font="vector" ratio="15">T7</text>
-<text x="12.065" y="37.465" size="1.27" layer="255" font="vector" ratio="15">T4</text>
+<text x="12.065" y="38.735" size="1.27" layer="255" font="vector" ratio="15">T4</text>
 <text x="33.782" y="13.97" size="1.27" layer="255" font="vector" ratio="15">R13</text>
 <text x="33.782" y="11.938" size="1.27" layer="255" font="vector" ratio="15">LED4</text>
 <text x="0" y="43.815" size="1.27" layer="255" font="vector" ratio="15">LCD</text>
@@ -537,7 +537,7 @@
 <text x="1.651" y="46.482" size="1.27" layer="255" font="vector" ratio="15" rot="R90">T8</text>
 <text x="0.762" y="39.624" size="1.27" layer="255" font="vector" ratio="15">-</text>
 <text x="3.302" y="39.497" size="1.27" layer="255" font="vector" ratio="15">+</text>
-<text x="45.72" y="40.64" size="1.27" layer="253" font="vector" ratio="15" rot="SMR0">free to use</text>
+<text x="45.72" y="40.64" size="1.27" layer="253" font="vector" ratio="15" rot="SMR0">for free use</text>
 <text x="45.72" y="38.735" size="1.27" layer="253" font="vector" ratio="15" rot="MR0">by everyone</text>
 </plain>
 <libraries>

@@ -39,7 +39,7 @@ Mechanical files (FreeCAD 0.16)
 - /Mechanical/Frontplate         Frontplate that holds the raspberry pi display, buttons and speakers - prototype, did not fit in 3d printer
 - /Mechanical/RPIMount           Mounting that holds the raspberry pi + PCBs on the raspberry pi display
 - /Mechanical/Housing			 Model of the housing
-
+!!!!!Moved all mechanical files to thingiverse
 
 Serial Command Interface:
 
